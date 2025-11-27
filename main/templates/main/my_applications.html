@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои заявки - Design.pro</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Design.pro</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/">Главная</a></li>
+                <li><a href="/profile/">Личный кабинет</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Мои заявки</h2>
+
+        {% if applications %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                    <tr>
+                        <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>{{ application.title }}</td>
+                        <td>{{ application.category.name }}</td>
+                        <td>
+                            {% if application.status == 'new' %}
+                                <span class="label label-primary">Новая</span>
+                            {% elif application.status == 'in_progress' %}
+                                <span class="label label-warning">В работе</span>
+                            {% else %}
+                                <span class="label label-success">Выполнено</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                У вас пока нет заявок. <a href="{% url 'create_application' %}">Создайте первую заявку</a>.
+            </div>
+        {% endif %}
+
+        <a href="/profile/" class="btn btn-default">Назад в кабинет</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать заявку - Design.pro</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Design.pro</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/">Главная</a></li>
+                <li><a href="/profile/">Личный кабинет</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Создать заявку на дизайн</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">Создать заявку</button>
+            <a href="/profile/" class="btn btn-default">Отмена</a>
+        </form>
+    </div>
+</body>
+</html>
