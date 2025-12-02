@@ -17,7 +17,15 @@
             </ul>
         </div>
     </nav>
-
+<div style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px;">
+    <strong>Фильтр:</strong>
+    <div style="margin-top: 10px;">
+        <a href="{% url 'my_applications' %}" class="btn btn-default btn-sm">Все</a>
+        <a href="{% url 'my_applications' %}?status=new" class="btn btn-default btn-sm">Новые</a>
+        <a href="{% url 'my_applications' %}?status=in_progress" class="btn btn-default btn-sm">В работе</a>
+        <a href="{% url 'my_applications' %}?status=completed" class="btn btn-default btn-sm">Выполненные</a>
+    </div>
+</div>
     <div class="container">
         <h2>Мои заявки</h2>
 
@@ -46,6 +54,17 @@
                                 <span class="label label-success">Выполнено</span>
                             {% endif %}
                         </td>
+                        <td>
+    {% if application.status == 'new' %}
+        <form method="post" action="{% url 'delete_application' application.id %}"
+              onsubmit="return confirm('Вы уверены, что хотите удалить эту заявку?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-xs">Удалить</button>
+        </form>
+    {% else %}
+        <span class="text-muted">Нельзя удалить</span>
+    {% endif %}
+</td>
                     </tr>
                     {% endfor %}
                 </tbody>

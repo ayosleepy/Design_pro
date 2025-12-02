@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Админка - Design.pro</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .admin-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .status-new { background: #d9edf7; }
+        .status-in_progress { background: #fcf8e3; }
+        .status-completed { background: #dff0d8; }
+        .action-form { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/superadmin/">Admin Panel</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/">На сайт</a></li>
+                <li><a href="/admin/">Django Admin</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/logout/">Выйти ({{ user.username }})</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Административная панель</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="admin-section">
+            <h3>Категории заявок</h3>
+
+            <form method="post" action="{% url 'add_category' %}" class="form-inline" style="margin-bottom: 15px;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" class="form-control" placeholder="Название категории" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+
+            <table class="table">
+                <tr>
+                    <th>Название</th>
+                    <th>Действия</th>
+                </tr>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_category' category.id %}"
+                              onsubmit="return confirm('Удалить категорию?');" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="admin-section">
+            <h3>Все заявки</h3>
+
+            <table class="table">
+                <tr>
+                    <th>Дата</th>
+                    <th>Пользователь</th>
+                    <th>Заявка</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+                {% for app in applications %}
+                <tr class="status-{{ app.status }}">
+                    <td><small>{{ app.created_at|date:"d.m.Y" }}</small></td>
+                    <td>{{ app.user.username }}</td>
+                    <td>
+                        <strong>{{ app.title }}</strong><br>
+                        <small>{{ app.category.name }}</small>
+                    </td>
+                    <td>
+                        {% if app.status == 'new' %}
+                            <span class="label label-primary">Новая</span>
+                        {% elif app.status == 'in_progress' %}
+                            <span class="label label-warning">В работе</span>
+                        {% else %}
+                            <span class="label label-success">Выполнено</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.status == 'new' %}
+                            <form method="post" action="{% url 'change_status' app.id 'in_progress' %}" class="action-form">
+                                {% csrf_token %}
+                                <input type="text" name="comment" class="form-control input-sm" placeholder="Комментарий" required style="margin-bottom: 5px;">
+                                <button type="submit" class="btn btn-warning btn-xs btn-block">Принять в работу</button>
+                            </form>
+
+                            <form method="post" action="{% url 'change_status' app.id 'completed' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="design_photo" class="form-control input-sm" required style="margin-bottom: 5px;">
+                                <button type="submit" class="btn btn-success btn-xs btn-block">Отметить выполненной</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
