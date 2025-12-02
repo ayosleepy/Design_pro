@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, Application
 import re
-from .models import Application, Category
 
 class CustomUserCreationForm(UserCreationForm):
     password1 = forms.CharField(
@@ -43,7 +42,6 @@ class CustomUserCreationForm(UserCreationForm):
         if not re.match(r'^[a-zA-Z-]+$', username):
             raise forms.ValidationError('Логин должен содержать только латинские буквы и дефисы')
         return username
-
 
 class ApplicationForm(forms.ModelForm):
     class Meta:
