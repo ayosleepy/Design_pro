@@ -16,6 +16,9 @@
                 {% if user.is_authenticated %}
                     <li><a href="/profile/">Личный кабинет</a></li>
                 {% endif %}
+            {% if user.is_staff %}
+    <li><a href="/superadmin/">AdminPanel</a></li>
+{% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
